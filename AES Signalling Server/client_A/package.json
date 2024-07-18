@@ -1,0 +1,37 @@
+{
+    "name": "simple_nodejs_client_sharring_aes_key",
+    "version": "0.1.0",
+    "description": "Sharing AES key between two clients using Sockets",
+    "main": "server.js",
+    "repository": "",
+    "author": "",
+    "license": "MIT",
+    "scripts": {
+        "start": "env-cmd -f ./config/prod.env node server.js",
+        "dev": "env-cmd -f ./config/dev.env nodemon server.js",
+        "chat": "env-cmd -f ./config/dev.env node examples/chat/server.js",
+        "ros": "env-cmd -f ./config/dev.env node examples/ros/server.js"
+    },
+    "dependencies": {
+        "inquirer": "^8.1.0",
+        "roslib": "^1.1.0",
+        "socket.io-client": "^4.0.1",
+        "wrtc": "^0.4.7",
+        "env-cmd": "^10.1.0",
+        "yargs": "^17.0.1"
+    },
+    "devDependencies": {
+        "nodemon": "^2.0.4"
+    },
+    "keywords": [
+        "client",
+        "webrtc",
+        "peer-to-peer",
+        "signaling",
+        "socket.io",
+        "websocket"
+    ],
+    "engines": {
+        "node": ">=14.x"
+    }
+}

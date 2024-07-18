@@ -1,0 +1,26 @@
+{
+  "name": "client_a",
+  "version": "1.0.0",
+  "description": "nil",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js",
+    "dev": "nodemon server.js"
+  },
+  "author": "aadityaa nagarajan",
+  "license": "MIT",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "crystals-kyber": "^5.1.0",
+    "express": "^4.19.2",
+    "fs": "^0.0.1-security",
+    "http": "^0.0.1-security",
+    "nodemon": "^3.1.4",
+    "perf_hooks": "^0.0.1",
+    "sirv": "^2.0.4",
+    "socket.io": "^4.7.5",
+    "socket.io-client": "^4.7.5",
+    "yargs": "^17.7.2"
+  }
+}
