@@ -35,3 +35,12 @@ socket.on('receiveSharedSecret', (encryptedSharedSecret) => {
         console.error('Error decrypting shared secret:', error);
     }
 });
+
+socket.on('receiveMessage', (encryptedMessage) => {
+    try {
+        const message = kyber.Decrypt768(encryptedMessage, clientBPrivateKey);
+        console.log(`Client B received message: ${message.toString('utf8')}`);
+    } catch (error) {
+        console.error('Error decrypting message:', error);
+    }
+});

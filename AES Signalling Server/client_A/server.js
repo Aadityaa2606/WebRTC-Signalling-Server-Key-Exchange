@@ -24,7 +24,19 @@ function encryptWithPublicKey(aesKey, publicKey) {
       .toString("base64");
 }
 
-// Generate the AES key save it as TOKEN in environment varialbes and encrypt it
+function encryptMessage(aesKey, iv, message) {
+    const cipher = crypto.createCipheriv('aes-256-gcm', aesKey, iv);
+    let encrypted = cipher.update(message, 'utf8', 'hex');
+    encrypted += cipher.final('hex');
+    const authTag = cipher.getAuthTag().toString('hex');
+    return {
+        encryptedMessage: encrypted,
+        iv: iv.toString('hex'),
+        authTag: authTag
+    };
+}
+
+// Generate the AES key and encrypt it
 const aesKey = generateAESKey();
 
 const encryptedAESKey = encryptWithPublicKey(aesKey, serverPublicKey);
@@ -41,4 +53,22 @@ socket.on("connect", () => {
     console.log(`Time taken to send AES key: ${(endTime - startTime).toFixed(3)} ms`);
   });
   console.log("Sent AES key to the server: ", aesKey.toString("hex"));
+
+    // Example message
+    const message = `lorem ipsum dolor sit amet, consectetur adipiscing elit Nullam 
+    auctor, nunc id aliquam lacinia, velit nunc tincidunt urna, nec molestie risus n
+    isl et nunc. Sed id semper nisl. Fusce auctor, ligula  ligula vitae finibus tinc
+    idunt, mauris justo efficitur nunc, nec ultrices nunc lectus a justo.";vitae finibus
+     tincidunt, mauris justo efficitur nunc, nec ultrices nunc lectus a justo.`;
+    const iv = crypto.randomBytes(16);
+    const { encryptedMessage, authTag } = encryptMessage(aesKey, iv, message);
+    // console.log("Encrypted message:", encryptedMessage);
+    // console.log("IV:", iv.toString('hex'));
+    // console.log("Auth Tag:", authTag);
+    const messageStartTime = performance.now();
+    socket.emit("sendMessage", { encryptedMessage, iv: iv.toString('hex'), authTag: authTag }, () => {
+        const messageEndTime = performance.now();
+        console.log(`Time taken to send message: ${(messageEndTime - messageStartTime).toFixed(3)} ms`);
+    });
 });
+

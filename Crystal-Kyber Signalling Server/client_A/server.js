@@ -20,6 +20,18 @@ const serverPublicKey = Buffer.from(fs.readFileSync('../server/server_public.pem
 // Connect to the signaling server
 const socket = io('http://localhost:3030');
 
+// Sending a message
+const sendMessage = (message) => {
+    const encryptedMessage = kyber.Encrypt768(serverPublicKey, Buffer.from(message, 'utf8'));
+    socket.emit('sendMessage', encryptedMessage, (error, response) => {
+        if (error) {
+            console.error('Error sending message:', error);
+        } else {
+            console.log(response);
+        }
+    });
+};
+
 socket.on('connect', () => {
     console.log('Connected to the server');
 
@@ -33,4 +45,11 @@ socket.on('connect', () => {
         const endTime = performance.now();
         console.log(`Time taken to send shared secret: ${(endTime - startTime).toFixed(3)} ms`);
     });
+
+    const message = `lorem ipsum dolor sit amet, consectetur adipiscing elit Nullam 
+    auctor, nunc id aliquam lacinia, velit nunc tincidunt urna, nec molestie risus n
+    isl et nunc. Sed id semper nisl. Fusce auctor, ligula  ligula vitae finibus tinc
+    idunt, mauris justo efficitur nunc, nec ultrices nunc lectus a justo.";vitae finibus
+     tincidunt, mauris justo efficitur nunc, nec ultrices nunc lectus a justo.`;
+    sendMessage(message);
 });

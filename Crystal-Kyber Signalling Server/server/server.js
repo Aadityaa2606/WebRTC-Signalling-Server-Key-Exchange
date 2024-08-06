@@ -56,6 +56,28 @@ io.on('connection', (socket) => {
             console.error('Error decrypting or encrypting shared secret:', error);
         }
     });
+    
+    socket.on('sendMessage', (encryptedMessage, callback) => {
+        try {
+            const message = kyber.Decrypt768(encryptedMessage, serverPrivateKey);
+            console.log(`Server received message: ${message.toString('utf8')}`);
+
+            // Encrypt the message with Client B's public key
+            const [encryptedMessageForClientB] = kyber.Encrypt768(clientBPublicKey, message);
+
+            // Send the encrypted message to Client B
+            socket.broadcast.emit('receiveMessage', encryptedMessageForClientB);
+
+            callback(null, 'Message sent to Client B');
+        } catch (error) {
+            console.error('Error decrypting or encrypting message:', error);
+            callback(error);
+        }
+    });
+
+    socket.on('disconnect', () => {
+        console.log(socket.id, 'has disconnected');
+    });
 
     socket.on('disconnect', () => {
         console.log(socket.id, 'has disconnected');
