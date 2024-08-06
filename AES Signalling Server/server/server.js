@@ -75,6 +75,10 @@ io.on("connection", (socket) => {
         }
     });
 
+    socket.on("sendMessage", ({ encryptedMessage, iv, authTag }) => {
+        socket.broadcast.emit("receiveMessage", { encryptedMessage, iv, authTag });
+    });
+
     socket.on("disconnect", () => {
         console.log(socket.id, "has disconnected");
     });

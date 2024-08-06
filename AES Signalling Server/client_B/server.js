@@ -22,6 +22,14 @@ function decryptWithPrivateKey(encryptedKey, privateKey) {
     );
 }
 
+function decryptMessage(aesKey, iv, encryptedMessage, authTag) {
+    const decipher = crypto.createDecipheriv('aes-256-gcm', aesKey, Buffer.from(iv, 'hex'));
+    decipher.setAuthTag(Buffer.from(authTag, 'hex'));
+    let decrypted = decipher.update(encryptedMessage, 'hex', 'utf8');
+    decrypted += decipher.final('utf8');
+    return decrypted;
+}
+
 // Connect to the signaling server
 const socket = io(process.env.SIGNALING_SERVER_URL || "http://localhost:3030");
 
@@ -33,6 +41,7 @@ socket.on("receiveAESKey", (encryptedAESKey) => {
     const startTime = performance.now();
 
     try {
+        console.log("Received encrypted AES key:", encryptedAESKey);
         // Decrypt the AES key with Client B's private key
         aesKey = decryptWithPrivateKey(encryptedAESKey, clientBPrivateKey);
         console.log("Received and decrypted AES key:", aesKey.toString("hex"));
@@ -40,6 +49,22 @@ socket.on("receiveAESKey", (encryptedAESKey) => {
         console.log(`Time taken to receive and decrypt AES key: ${(endTime - startTime).toFixed(3)} ms`);
     } catch (error) {
         console.error("Error decrypting AES key:", error);
+    }
+});
+
+socket.on("receiveMessage", ({ encryptedMessage, iv, authTag }) => {
+    console.log("Client B received encrypted message.");
+    // console.log("Encrypted message:", encryptedMessage);
+    // console.log("IV:", iv.toString('hex'));
+    // console.log("Auth Tag:", authTag);
+    const messageStartTime = performance.now();
+    try {
+        const decryptedMessage = decryptMessage(aesKey, iv, encryptedMessage, authTag);
+        const messageEndTime = performance.now();
+        console.log(`Decrypted message: ${decryptedMessage}`);
+        console.log(`Time taken to decrypt message: ${(messageEndTime - messageStartTime).toFixed(3)} ms`);
+    } catch (error) {
+        console.error("Error decrypting message:", error);
     }
 });
 
