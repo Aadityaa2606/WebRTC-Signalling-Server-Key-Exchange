@@ -24,7 +24,6 @@ socket.on('connect', () => {
 
 socket.on('receiveSharedSecret', (encryptedSharedSecret) => {
     const startTime = performance.now(); // Start measuring time
-
     try {
         // Decrypt the shared secret with Client B's private key
         [sharedSecret] = kyber.Decrypt768(encryptedSharedSecret, clientBPrivateKey);
@@ -38,8 +37,10 @@ socket.on('receiveSharedSecret', (encryptedSharedSecret) => {
 
 socket.on('receiveMessage', (encryptedMessage) => {
     try {
+        const messageStartTime = performance.now();
         const message = kyber.Decrypt768(encryptedMessage, clientBPrivateKey);
-        console.log(`Client B received message: ${message.toString('utf8')}`);
+        const messageEndTime = performance.now();
+        console.log(`Time taken to receive and decrypt message: ${(messageEndTime - messageStartTime).toFixed (3)} ms`);
     } catch (error) {
         console.error('Error decrypting message:', error);
     }

@@ -1,5 +1,5 @@
 {
-    "name": "simple_nodejs_client_sharring_aes_key",
+    "name": "simple_nodejs_client_sharing_aes_key",
     "version": "0.1.0",
     "description": "Sharing AES key between two clients using Sockets",
     "main": "server.js",
